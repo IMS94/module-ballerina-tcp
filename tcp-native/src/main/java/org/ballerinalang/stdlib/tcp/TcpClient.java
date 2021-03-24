@@ -30,6 +30,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.proxy.Socks4ProxyHandler;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.timeout.IdleStateHandler;
@@ -54,6 +55,9 @@ public class TcpClient {
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
+                        InetSocketAddress proxyAddress = new InetSocketAddress("localhost", 9050);
+                        ch.pipeline().addFirst(new Socks4ProxyHandler(proxyAddress));
+
                         TcpClientHandler tcpClientHandler = new TcpClientHandler();
                         if (secureSocket != null
                                 && secureSocket.getBooleanValue(Constants.SECURESOCKET_CONFIG_ENABLE_SSL)) {
